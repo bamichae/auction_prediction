@@ -32,6 +32,7 @@ class PastSalesPage:
         """
         drop_down_box = Select(self.driver.find_element(By.XPATH, '//*[@id="pastsales[months]"]'))
         drop_down_box.select_by_index(index)
+        self.click_go()
         time.sleep(1)
 
     def get_total_months_to_query(self):
@@ -42,13 +43,45 @@ class PastSalesPage:
         drop_down_box = Select(self.driver.find_element(By.XPATH, '//*[@id="pastsales[months]"]'))
         options = drop_down_box.options
         return len(options) - 1
+
     def select_month(self):
         self.select_month_dropdown(self.current_month_index)
 
+    def select_auction_item_link(self, link_text):
+        self.driver.get(link_text)
+        time.sleep(1)
+
+    def get_auction_links(self):
+        """
+        Get auction links from month page
+        :return:
+        """
+        links = []
+        # Get href from <a /> tag
+        auction_items = self.driver.find_elements(By.XPATH, "//a[contains(@href, 'item')]")
+
+        # Store auction links
+        for auction_item in auction_items:
+            links.append(auction_item.get_property('href'))
+        return links
+
     def run(self):
+        # Home page
         self.past_sales_page()
         for month_index in range(1, self.get_total_months_to_query()):
+            # Click month
             self.select_month_dropdown(month_index)
-            self.click_go()
+
+            # Search for links
+            auction_links = self.get_auction_links()
+            for auction_link in auction_links:
+                # Click links
+                self.select_auction_item_link(auction_link)
+
+            # Return to home page
+            self.past_sales_page()
+
+
+
 
 
