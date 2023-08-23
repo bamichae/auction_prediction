@@ -3,8 +3,8 @@ from ingestion.models.postings.mechanical import Mechanical
 
 class Vehicle(Mechanical):
     def __init__(self,
-                 id,
-                 name,
-                 year,
-                 make):
-        super().__init__(id, name, year, make)
+                 identifier=None,
+                 name=None,
+                 year=None,
+                 make=None):
+        super().__init__(identifier, name, year, make)

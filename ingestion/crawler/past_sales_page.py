@@ -1,13 +1,14 @@
 """
 Page of all past postings
 """
-import os
-import select
+
 import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
+
+from ingestion.crawler.posting import Posting
 
 
 class PastSalesPage:
@@ -58,7 +59,7 @@ class PastSalesPage:
         """
         links = []
         # Get href from <a /> tag
-        auction_items = self.driver.find_elements(By.XPATH, "//a[contains(@href, 'item')]")
+        auction_items = self.driver.find_elements(By.XPATH, "//a[contains(@href, '/auction/') and contains(@href, '/item/')]")
 
         # Store auction links
         for auction_item in auction_items:
@@ -66,6 +67,7 @@ class PastSalesPage:
         return links
 
     def run(self):
+        test = []
         # Home page
         self.past_sales_page()
         for month_index in range(1, self.get_total_months_to_query()):
@@ -76,12 +78,9 @@ class PastSalesPage:
             auction_links = self.get_auction_links()
             for auction_link in auction_links:
                 # Click links
-                self.select_auction_item_link(auction_link)
+                print(auction_link)
+                posting = Posting()
+                test.append(posting.store_details(auction_link))
 
             # Return to home page
             self.past_sales_page()
-
-
-
-
-
